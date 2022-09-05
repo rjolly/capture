@@ -17,7 +17,6 @@ import java.lang.{StringBuilder => JStringBuilder}
 
 import scala.annotation.tailrec
 import scala.annotation.unchecked.uncheckedVariance
-import scala.collection.generic.SerializeEnd
 import scala.collection.mutable.{ArrayBuffer, StringBuilder}
 import scala.collection.{SeqFactory, AbstractSeq, LinearSeq, LinearSeqOps, IterableFactoryDefaults}
 import scala.language.implicitConversions
@@ -538,29 +537,6 @@ object Stream extends SeqFactory[Stream] {
     */
   @SerialVersionUID(3L)
   class SerializationProxy[A](@transient protected var coll: Stream[A]) extends Serializable {
-
-    private[this] def writeObject(out: ObjectOutputStream): Unit = {
-      out.defaultWriteObject()
-      var these = coll
-      while(these.nonEmpty && these.tailDefined) {
-        out.writeObject(these.head)
-        these = these.tail
-      }
-      out.writeObject(SerializeEnd)
-      out.writeObject(these)
-    }
-
-    private[this] def readObject(in: ObjectInputStream): Unit = {
-      in.defaultReadObject()
-      val init = new ArrayBuffer[A]
-      var initRead = false
-      while (!initRead) in.readObject match {
-        case SerializeEnd => initRead = true
-        case a => init += a.asInstanceOf[A]
-      }
-      val tail = in.readObject().asInstanceOf[Stream[A]]
-      coll = (init ++: tail)
-    }
 
     protected[this] def readResolve(): Any = coll
   }
