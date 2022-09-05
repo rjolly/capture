@@ -187,12 +187,8 @@ import scala.language.implicitConversions
 @deprecatedInheritance("This class will be sealed.", "2.11.0")
 abstract class Stream[+A] extends AbstractSeq[A]
                              with LinearSeq[A]
-                             with GenericTraversableTemplate[A, Stream]
-                             with LinearSeqOptimized[A, Stream[A]]
                              with Serializable {
 self =>
-  override def companion: GenericCompanion[Stream] = Stream
-
   import scala.collection.{Traversable, Iterable, Seq, IndexedSeq}
 
   /** Indicates whether or not the `Stream` is empty.
