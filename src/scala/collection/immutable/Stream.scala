@@ -255,13 +255,13 @@ self =>
   }
 
   /** Prints elements of this stream one by one, separated by commas. */
-  def print() { print(", ") }
+  def print() = { print(", ") }
 
   /** Prints elements of this stream one by one, separated by `sep`.
    *  @param sep   The separator string printed between consecutive elements.
    */
-  def print(sep: String) {
-    def loop(these: Stream[A], start: String) {
+  def print(sep: String) = {
+    def loop(these: Stream[A], start: String) = {
       Console.print(start)
       if (these.isEmpty) Console.print("empty")
       else {
@@ -550,7 +550,7 @@ self =>
    *  unless the `f` throws an exception.
    */
   @tailrec
-  override final def foreach[B](f: A => B) {
+  override final def foreach[B](f: A => B) = {
     if (!this.isEmpty) {
       f(head)
       tail.foreach(f)
@@ -691,7 +691,7 @@ self =>
    * resulting string.
    */
   override def addString(b: StringBuilder, start: String, sep: String, end: String): StringBuilder = {
-    def loop(pre: String, these: Stream[A]) {
+    def loop(pre: String, these: Stream[A]) = {
       if (these.isEmpty) b append end
       else {
         b append pre append these.head
@@ -982,7 +982,7 @@ self =>
  *  iterate as lazily as it traverses the tail.
  */
 final class StreamIterator[+A] private() extends AbstractIterator[A] with Iterator[A] {
-  def this(self: Stream[A]) {
+  def this(self: Stream[A]) = {
     this()
     these = new LazyCell(self)
   }
