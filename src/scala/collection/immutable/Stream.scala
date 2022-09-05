@@ -24,7 +24,6 @@ import scala.collection.mutable.{ArrayBuffer, StringBuilder}
 import scala.language.implicitConversions
 import Stream.cons
 
-@deprecated("Use LazyList (which is fully lazy) instead of Stream (which has a lazy tail only)", "2.13.0")
 @SerialVersionUID(3L)
 sealed abstract class Stream[+A] extends AbstractSeq[A]
   with LinearSeq[A]
@@ -98,20 +97,17 @@ sealed abstract class Stream[+A] extends AbstractSeq[A]
     *  @param rest   The collection that gets appended to this stream
     *  @return       The stream containing elements of this stream and the iterable object.
     */
-  @deprecated("The `append` operation has been renamed `lazyAppendedAll`", "2.13.0")
   @inline final def append[B >: A](rest: => IterableOnce[B]): Stream[B] = lazyAppendedAll(rest)
 
   protected[this] def writeReplace(): AnyRef =
     if(nonEmpty && tailDefined) new Stream.SerializationProxy[A](this) else this
 
   /** Prints elements of this stream one by one, separated by commas. */
-  @deprecated(message = """Use print(stream.force.mkString(", ")) instead""", since = "2.13.0")
   @inline def print(): Unit = Console.print(this.force.mkString(", "))
 
   /** Prints elements of this stream one by one, separated by `sep`.
     *  @param sep   The separator string printed between consecutive elements.
     */
-  @deprecated(message = "Use print(stream.force.mkString(sep)) instead", since = "2.13.0")
   @inline def print(sep: String): Unit = Console.print(this.force.mkString(sep))
 
   /** The stream resulting from the concatenation of this stream with the argument stream.
@@ -209,7 +205,7 @@ sealed abstract class Stream[+A] extends AbstractSeq[A]
     }
 
   override final def zip[B](that: collection.IterableOnce[B]): Stream[(A, B)] =
-    if (this.isEmpty || that.isEmpty) iterableFactory.empty
+    if (this.isEmpty || that.iterator.isEmpty) iterableFactory.empty
     else {
       val thatIterable = that match {
         case that: collection.Iterable[B] => that
@@ -329,7 +325,6 @@ sealed abstract class Stream[+A] extends AbstractSeq[A]
     */
   override def toString = addStringNoForce(new JStringBuilder(className), "(", ", ", ")").toString
 
-  @deprecated("Check .knownSize instead of .hasDefiniteSize for more actionable information (see scaladoc for details)", "2.13.0")
   override def hasDefiniteSize: Boolean = isEmpty || {
     if (!tailDefined) false
     else {
@@ -351,7 +346,6 @@ sealed abstract class Stream[+A] extends AbstractSeq[A]
   }
 }
 
-@deprecated("Use LazyList (which is fully lazy) instead of Stream (which has a lazy tail only)", "2.13.0")
 @SerialVersionUID(3L)
 object Stream extends SeqFactory[Stream] {
 
