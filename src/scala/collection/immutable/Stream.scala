@@ -11,7 +11,7 @@ package collection
 package immutable
 
 import generic._
-import mutable.{Builder, StringBuilder, LazyBuilder, ListBuffer}
+import mutable.{Builder, StringBuilder, ListBuffer}
 import scala.annotation.tailrec
 import Stream.cons
 import scala.language.implicitConversions
@@ -295,7 +295,7 @@ self =>
   @inline private def asThat[That](x: AnyRef): That     = x.asInstanceOf[That]
   @inline private def asStream[B](x: AnyRef): Stream[B] = x.asInstanceOf[Stream[B]]
   @inline private def isStreamBuilder[B, That](bf: CanBuildFrom[Stream[A], B, That]) =
-    bf(repr).isInstanceOf[Stream.StreamBuilder[_]]
+    false
 
   // Overridden methods from Traversable
 
@@ -1032,19 +1032,7 @@ object Stream extends SeqFactory[Stream] {
 
   implicit def canBuildFrom[A]: CanBuildFrom[Coll, A, Stream[A]] = new StreamCanBuildFrom[A]
 
-  /** Creates a new builder for a stream */
-  def newBuilder[A]: Builder[A, Stream[A]] = new StreamBuilder[A]
-
   import scala.collection.{Iterable, Seq, IndexedSeq}
-
-  /** A builder for streams
-   *  @note This builder is lazy only in the sense that it does not go downs the spine
-   *        of traversables that are added as a whole. If more laziness can be achieved,
-   *        this builder should be bypassed.
-   */
-  class StreamBuilder[A] extends scala.collection.mutable.LazyBuilder[A, Stream[A]] {
-    def result: Stream[A] = parts.toStream flatMap (_.toStream)
-  }
 
   object Empty extends Stream[Nothing] {
     override def isEmpty = true
