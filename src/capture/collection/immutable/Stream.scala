@@ -10,9 +10,7 @@
  * additional information regarding copyright ownership.
  */
 
-package scala
-package collection
-package immutable
+package capture.collection.immutable
 
 import java.io.{ObjectInputStream, ObjectOutputStream}
 import java.lang.{StringBuilder => JStringBuilder}
@@ -21,6 +19,7 @@ import scala.annotation.tailrec
 import scala.annotation.unchecked.uncheckedVariance
 import scala.collection.generic.SerializeEnd
 import scala.collection.mutable.{ArrayBuffer, StringBuilder}
+import scala.collection.{SeqFactory, AbstractSeq, LinearSeq, LinearSeqOps, IterableFactoryDefaults}
 import scala.language.implicitConversions
 import Stream.cons
 
@@ -119,7 +118,7 @@ sealed abstract class Stream[+A] extends AbstractSeq[A]
     * @param suffix The collection that gets appended to this stream
     * @return The stream containing elements of this stream and the iterable object.
     */
-  def lazyAppendedAll[B >: A](suffix: => collection.IterableOnce[B]): Stream[B] =
+  def lazyAppendedAll[B >: A](suffix: => scala.collection.IterableOnce[B]): Stream[B] =
     if (isEmpty) iterableFactory.from(suffix) else cons[B](head, tail.lazyAppendedAll(suffix))
 
   override def scanLeft[B](z: B)(op: (B, A) => B): Stream[B] =
@@ -162,8 +161,8 @@ sealed abstract class Stream[+A] extends AbstractSeq[A]
     else iterableFactory.empty
   }
 
-  /** A `collection.WithFilter` which allows GC of the head of stream during processing */
-  override final def withFilter(p: A => Boolean): collection.WithFilter[A, Stream] =
+  /** A `scala.collection.WithFilter` which allows GC of the head of stream during processing */
+  override final def withFilter(p: A => Boolean): scala.collection.WithFilter[A, Stream] =
     Stream.withFilter(coll, p)
 
   override final def prepended[B >: A](elem: B): Stream[B] = cons(elem, coll)
@@ -208,7 +207,7 @@ sealed abstract class Stream[+A] extends AbstractSeq[A]
       else prefix.lazyAppendedAll(nonEmptyPrefix.tail.flatMap(f))
     }
 
-  override final def zip[B](that: collection.IterableOnce[B]): Stream[(A, B)] =
+  override final def zip[B](that: scala.collection.IterableOnce[B]): Stream[(A, B)] =
     if (this.isEmpty || that.isEmpty) iterableFactory.empty
     else {
       val thatIterable = that match {
@@ -451,7 +450,7 @@ object Stream extends SeqFactory[Stream] {
       if (s.nonEmpty) Some((s.head, s.tail)) else None
   }
 
-  def from[A](coll: collection.IterableOnce[A]): Stream[A] = coll match {
+  def from[A](coll: scala.collection.IterableOnce[A]): Stream[A] = coll match {
     case coll: Stream[A] => coll
     case _ => fromIterator(coll.iterator)
   }
@@ -471,18 +470,18 @@ object Stream extends SeqFactory[Stream] {
 
   def empty[A]: Stream[A] = Empty
 
-  override def newBuilder[A]: mutable.Builder[A, Stream[A]] = ArrayBuffer.newBuilder[A].mapResult(array => from(array))
+  override def newBuilder[A]: scala.collection.mutable.Builder[A, Stream[A]] = ArrayBuffer.newBuilder[A].mapResult(array => from(array))
 
-  private[immutable] def withFilter[A](l: Stream[A] @uncheckedVariance, p: A => Boolean): collection.WithFilter[A, Stream] =
+  private[immutable] def withFilter[A](l: Stream[A] @uncheckedVariance, p: A => Boolean): scala.collection.WithFilter[A, Stream] =
     new WithFilter[A](l, p)
 
-  private[this] final class WithFilter[A](l: Stream[A] @uncheckedVariance, p: A => Boolean) extends collection.WithFilter[A, Stream] {
+  private[this] final class WithFilter[A](l: Stream[A] @uncheckedVariance, p: A => Boolean) extends scala.collection.WithFilter[A, Stream] {
     private[this] var s = l                                                // set to null to allow GC after filtered
     private[this] lazy val filtered: Stream[A] = { val f = s.filter(p); s = null.asInstanceOf[Stream[A]]; f } // don't set to null if throw during filter
     def map[B](f: A => B): Stream[B] = filtered.map(f)
     def flatMap[B](f: A => IterableOnce[B]): Stream[B] = filtered.flatMap(f)
     def foreach[U](f: A => U): Unit = filtered.foreach(f)
-    def withFilter(q: A => Boolean): collection.WithFilter[A, Stream] = new WithFilter(filtered, q)
+    def withFilter(q: A => Boolean): scala.collection.WithFilter[A, Stream] = new WithFilter(filtered, q)
   }
 
   /** An infinite Stream that repeatedly applies a given function to a start value.
