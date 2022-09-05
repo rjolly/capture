@@ -251,13 +251,13 @@ self =>
   }
 
   /** Prints elements of this stream one by one, separated by commas. */
-  def print() = { print(", ") }
+  def print(): Unit = { print(", ") }
 
   /** Prints elements of this stream one by one, separated by `sep`.
    *  @param sep   The separator string printed between consecutive elements.
    */
   def print(sep: String) = {
-    def loop(these: Stream[A], start: String) = {
+    def loop(these: Stream[A], start: String): Unit = {
       Console.print(start)
       if (these.isEmpty) Console.print("empty")
       else {
