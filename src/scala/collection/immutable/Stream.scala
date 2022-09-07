@@ -1,7 +1,5 @@
 package scala.collection.immutable
 
-import scala.annotation.unchecked.uncheckedVariance
-
 abstract class Stream[+A] {
   def isEmpty: Boolean
   def head: A
@@ -10,14 +8,14 @@ abstract class Stream[+A] {
 
   def take(n: Int): Stream[A] = {
     if (n <= 0 || isEmpty) Stream.empty
-    else if (n == 1) new Stream.Cons(head, Stream.empty)
-    else new Stream.Cons(head, tail.take(n - 1))
+    else if (n == 1) Stream.cons(head, Stream.empty)
+    else Stream.cons(head, tail.take(n - 1))
   }
 
   def filter(p: A => Boolean): Stream[A] = {
     var rest: Stream[A] = this
     while (!rest.isEmpty && p(rest.head) == false) rest = rest.tail
-    if (!rest.isEmpty) Stream.filteredTail(rest, p)
+    if (!rest.isEmpty) Stream.cons(head, tail.filter(p))
     else Stream.empty
   }
 
@@ -70,8 +68,4 @@ object Stream {
     cons(start, from(start + step, step))
 
   def from(start: Int): Stream[Int] = from(start, 1)
-
-  private[Stream] def filteredTail[A](stream: Stream[A] @uncheckedVariance, p: A => Boolean) = {
-    cons(stream.head, stream.tail.filter(p))
-  }
 }
