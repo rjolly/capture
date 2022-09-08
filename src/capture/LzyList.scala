@@ -38,10 +38,21 @@ object LzyList {
       else if p(xs.head) then xs.head #: xs.tail.filter(p)
       else xs.tail.filter(p)
 
+    def take(n: Int): {xs} LzyList[A] = {
+      if (n <= 0 || xs.isEmpty) Nil
+      else if (n == 1) xs.head #: Nil
+      else xs.head #: xs.tail.take(n - 1)
+    }
+
     def force: {xs} LzyList[A] = {
       var these = xs
       while (!these.isEmpty) these = these.tail
       xs
     }
   }
+
+  def from(start: Int, step: Int): LzyList[Int] =
+    start #: from(start + step, step)
+
+  def from(start: Int): LzyList[Int] = from(start, 1)
 }
