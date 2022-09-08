@@ -1,6 +1,6 @@
 package capture
 
-import LzyList.{filter, force, take, #:, from}
+import LzyList.{#:, from}
 
 @main def Main(names: String*) = {
   def primes = sieve(from(2))
