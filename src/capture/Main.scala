@@ -1,10 +1,15 @@
 package capture
 
-import Stream.{Cons => cons, future}
+import Stream.{Cons => cons, Empty, #::}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @main def Main(names: String*) = {
-  def primes = sieve(Stream.from(2))
-  def sieve(s: Stream[Int]): Stream[Int] = cons(s.head, future(sieve(s.tail filter { _ % s.head != 0 })))
-  primes.take(4000).force
+  val n = 4000
+  def primes = sieve(Stream.range(2, n, 1))
+  def sieve(s: Stream[Int]): Stream[Int] = s match {
+    case head#::tail => cons(head, tail.map(s => sieve(s filter { _ % head != 0 })))
+    case Empty => Empty
+  }
+  primes.force
   println("hello world")
 }

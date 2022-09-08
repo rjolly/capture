@@ -43,6 +43,8 @@ object Stream {
     protected def tailDefined: Boolean = false
   }
 
+  val #:: = Cons
+
   case class Cons[+A](hd: A, tl: Future[Stream[A]]) extends Stream[A] {
     private[this] var defined: Boolean = _
     def isEmpty = false
@@ -61,4 +63,9 @@ object Stream {
   def from(start: Int): Stream[Int] = from(start, 1)
 
   def future[T](body: => T) = Lazy(body)
+
+  def range(start: Int, end: Int, step: Int): Stream[Int] = {
+    if (if (step < 0) start <= end else end <= start) Empty
+    else cons(start, future(range(start + step, end, step)))
+  }
 }
