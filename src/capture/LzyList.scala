@@ -8,9 +8,10 @@ trait LzyList[+A] {
   def tail: {this} LzyList[A]
 
   def filter(p: A -> Boolean): {this} LzyList[A] =
-    if isEmpty then Nil
-    else if p(head) then head #: tail.filter(p)
-    else tail.filter(p)
+    var rest = this
+    while !rest.isEmpty && !p(rest.head) do rest = rest.tail
+    if !rest.isEmpty then rest.head #: rest.tail.filter(p)
+    else Nil
 
   def take(n: Int): {this} LzyList[A] =
     if (n <= 0 || isEmpty) Nil
