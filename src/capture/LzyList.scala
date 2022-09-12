@@ -1,6 +1,5 @@
 package capture
 
-import scala.compiletime.uninitialized
 import LzyList.{Nil, #:}
 
 trait LzyList[+A] {
@@ -32,15 +31,9 @@ object LzyList {
   }
 
   final class Cons[+A](hd: A, tl: () => {*} LzyList[A]) extends LzyList[A] {
-    private var forced = false
-    private var cache: {this} LzyList[A] = uninitialized
-    private def fce = {
-      if !forced then { cache = tl(); forced = true }
-      cache
-    }
     def isEmpty = false
     def head = hd
-    def tail: {this} LzyList[A] = fce
+    def tail: {this} LzyList[A] = tl()
   }
 
   extension [A](x: A)
