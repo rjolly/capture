@@ -1,4 +1,4 @@
-package scala.collection.immutable
+package capture
 
 abstract class Stream[+A] {
   def isEmpty: Boolean
@@ -18,8 +18,6 @@ abstract class Stream[+A] {
     if (!rest.isEmpty) Stream.cons(head, tail.filter(p))
     else Stream.empty
   }
-
-  protected def tailDefined: Boolean
 }
 
 object Stream {
@@ -32,32 +30,14 @@ object Stream {
     def head: Nothing = throw new NoSuchElementException("head of empty stream")
     def tail: Stream[Nothing] = throw new UnsupportedOperationException("tail of empty stream")
     def force = this
-    protected def tailDefined: Boolean = false
   }
 
   final class Cons[A](override val head: A, tl: => Stream[A]) extends Stream[A] {
     def isEmpty: Boolean = false
-    @volatile private[this] var tlVal: Stream[A] = _
-    protected def tailDefined: Boolean = tlVal ne null
-    def tail: Stream[A] = {
-      if (!tailDefined)
-        synchronized {
-          if (!tailDefined) tlVal = tl
-        }
-      tlVal
-    }
+    def tail = tl
     def force = {
-      // Use standard 2x 1x iterator trick for cycle detection ("those" is slow one)
-      var these, those: Stream[A] = this
-      if (!these.isEmpty) these = these.tail
-      while (those ne these) {
-        if (these.isEmpty) return this
-        these = these.tail
-        if (these.isEmpty) return this
-        these = these.tail
-        if (these eq those) return this
-        those = those.tail
-      }
+      var these: Stream[A] = this
+      while (!these.isEmpty) these = these.tail
       this
     }
   }
