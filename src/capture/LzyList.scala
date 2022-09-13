@@ -1,5 +1,7 @@
 package capture
 
+import scala.annotation.tailrec
+
 import LzyList.{Nil, #:}
 
 trait LzyList[+A] {
@@ -7,10 +9,12 @@ trait LzyList[+A] {
   def head: A
   def tail: {this} LzyList[A]
 
-  def filter(p: A -> Boolean): {this} LzyList[A] =
+  @tailrec final def filter(p: A -> Boolean): {this} LzyList[A] =
     if isEmpty then Nil
-    else if p(head) then head #: tail.filter(p)
+    else if p(head) then head #: tail.filter2(p)
     else tail.filter(p)
+
+  def filter2(p: A -> Boolean): {this} LzyList[A] = filter(p)
 
   def take(n: Int): {this} LzyList[A] =
     if (n <= 0 || isEmpty) Nil
