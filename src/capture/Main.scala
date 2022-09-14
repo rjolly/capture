@@ -4,7 +4,7 @@ import LzyList.{#:, from}
 
 @main def Main(names: String*) = {
   def primes = sieve(from(2))
-  def sieve(s: LzyList[Int]): LzyList[Int] = {
+  def sieve(s: {*} LzyList[Int]): {s} LzyList[Int] = {
     val n = s.head
     n #: sieve(s.tail filter { _ % n != 0 })
   }
