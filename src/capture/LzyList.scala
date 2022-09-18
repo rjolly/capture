@@ -10,8 +10,10 @@ trait LzyList[+A] {
   def filter(p: A -> Boolean): {this} LzyList[A] =
     var rest = this
     while !rest.isEmpty && !p(rest.head) do rest = rest.tail
-    if !rest.isEmpty then rest.head #: rest.tail.filter(p)
-    else Nil
+    rest match {
+      case head #: tail => head #: tail.filter(p)
+      case _ => Nil
+    }
 
   def take(n: Int): {this} LzyList[A] =
     if (n <= 0 || isEmpty) Nil
@@ -29,6 +31,11 @@ object LzyList {
     def isEmpty = true
     def head = ???
     def tail = ???
+  }
+
+  object #: {
+    def unapply[A](s: {*} LzyList[A]): Option[(A, {s} LzyList[A])] =
+      if (!s.isEmpty) Some((s.head, s.tail)) else None
   }
 
   final class Cons[+A](hd: A, tl: () => {*} LzyList[A]) extends LzyList[A] {
