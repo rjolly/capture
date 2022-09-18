@@ -15,7 +15,7 @@ abstract class Stream[+A] {
   def filter(p: A => Boolean): Stream[A] = {
     var rest: Stream[A] = this
     while (!rest.isEmpty && p(rest.head) == false) rest = rest.tail
-    if (!rest.isEmpty) Stream.cons(head, tail.filter(p))
+    if (!rest.isEmpty) Stream.cons(rest.head, rest.tail.filter(p))
     else Stream.empty
   }
 }
