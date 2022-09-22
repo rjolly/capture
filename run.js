@@ -1,1 +1,1 @@
-run("capture.Main", "classes")
+run("capture.Sieve", "classes")
