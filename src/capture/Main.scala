@@ -8,6 +8,8 @@ import LzyList.{#:, from}
     val n = s.head
     n #: sieve(s.tail filter { _ % n != 0 })
   }
-  primes.take(4000).force
-  println("hello world")
+  var t = System.currentTimeMillis();
+  val r = primes.drop(4000).head
+  t = System.currentTimeMillis() - t;
+  println(s"r: ${r}, t: ${t}")
 }

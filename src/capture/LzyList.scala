@@ -1,5 +1,6 @@
 package capture
 
+import scala.annotation.tailrec
 import LzyList.{Nil, #:}
 
 trait LzyList[+A] {
@@ -16,6 +17,10 @@ trait LzyList[+A] {
     if (n <= 0 || isEmpty) Nil
     else if (n == 1) head #: Nil
     else head #: tail.take(n - 1)
+
+  @tailrec final def drop(n: Int): {this} LzyList[A] =
+    if (n <= 0 || isEmpty) this
+    else tail.drop(n - 1)
 
   def force: {this} LzyList[A] =
     var these = this
