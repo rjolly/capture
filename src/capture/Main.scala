@@ -6,7 +6,7 @@ import LzyList.{#:, from}
   def primes = sieve(from(2))
   def sieve(s: {*} LzyList[Int]): {s} LzyList[Int] = {
     val n = s.head
-    n #: sieve(s.tail filter { _ % n != 0 })
+    n #: s.tail.map(s => sieve(s filter { _ % n != 0 }))
   }
   var t = System.currentTimeMillis();
   val r = primes.drop(4000).head
