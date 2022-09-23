@@ -35,15 +35,15 @@ object LzyList {
     def tail = ???
   }
 
-  final class Cons[+A](hd: A, tl: () => {*} LzyList[A]) extends LzyList[A] {
+  final class Cons[+A](hd: A, tl: => {*} LzyList[A]) extends LzyList[A] {
     def isEmpty = false
     def head = hd
-    def tail: {this} LzyList[A] = tl()
+    def tail: {this} LzyList[A] = tl
   }
 
   extension [A](x: A)
     def #:(xs1: => {*} LzyList[A]): {xs1} LzyList[A] =
-      Cons(x, () => xs1)
+      Cons(x, xs1)
 
   def from(start: Int, step: Int): LzyList[Int] =
     start #: from(start + step, step)
