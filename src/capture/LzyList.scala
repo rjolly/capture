@@ -6,14 +6,14 @@ import LzyList.{Nil, #:}
 trait LzyList[+A] {
   def isEmpty: Boolean
   def head: A
-  def tail: {this} LzyList[A]
+  def tail: LzyList[A]
 
-  def filter(p: A -> Boolean): {this} LzyList[A] =
+  def filter(p: A -> Boolean): LzyList[A] =
     if isEmpty then Nil
     else if p(head) then head #: tail.filter(p)
     else tail.filter(p)
 
-  def take(n: Int): {this} LzyList[A] =
+  def take(n: Int): LzyList[A] =
     if (n <= 0 || isEmpty) Nil
     else if (n == 1) head #: Nil
     else head #: tail.take(n - 1)
@@ -35,14 +35,14 @@ object LzyList {
     def tail = ???
   }
 
-  final class Cons[+A](hd: A, tl: => {*} LzyList[A]) extends LzyList[A] {
+  final class Cons[+A](hd: A, tl: => LzyList[A]) extends LzyList[A] {
     def isEmpty = false
     def head = hd
-    def tail: {this} LzyList[A] = tl
+    def tail: LzyList[A] = tl
   }
 
   extension [A](x: A)
-    def #:(xs1: => {*} LzyList[A]): {xs1} LzyList[A] =
+    def #:(xs1: => LzyList[A]): {xs1} LzyList[A] =
       Cons(x, xs1)
 
   def from(start: Int, step: Int): LzyList[Int] =
