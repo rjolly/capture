@@ -49,4 +49,10 @@ object LzyList {
     start #: Future(from(start + step, step))
 
   def from(start: Int): LzyList[Int] = from(start, 1)
+
+  def range(start: Int, end: Int, step: Int): LzyList[Int] =
+    if (if (step < 0) start <= end else end <= start) Nil
+    else start #: Future(range(start + step, end, step))
+
+  def range(start: Int, end: Int): LzyList[Int] = range(start, end, 1)
 }
