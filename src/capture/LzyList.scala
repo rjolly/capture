@@ -8,7 +8,7 @@ trait LzyList[+A] {
   def head: A
   def tail: {this} LzyList[A]
 
-  def filter(p: A -> Boolean): {this} LzyList[A] =
+  def filter(p: A => Boolean): {this, p} LzyList[A] =
     if isEmpty then Nil
     else if p(head) then head #: tail.filter(p)
     else tail.filter(p)
