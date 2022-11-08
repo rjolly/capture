@@ -1,5 +1,6 @@
 package capture
 
+import language.experimental.captureChecking
 import LzyList.{#:, range}
 
 @main def Main(names: String*) = {

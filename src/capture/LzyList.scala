@@ -1,5 +1,6 @@
 package capture
 
+import language.experimental.captureChecking
 import scala.annotation.tailrec
 import LzyList.{Nil, #:}
 

@@ -1,5 +1,7 @@
 package capture
 
+import language.experimental.captureChecking
+
 trait Lazy[+T] extends (() => T):
   def map[S](f: T -> S) = Lazy(f(apply))
   def flatMap[S](f: T -> Lazy[S]) = f(apply)
