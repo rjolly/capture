@@ -1,10 +1,11 @@
 import language.experimental.{captureChecking, separationChecking}
 
-class Matrix(nrows: Int, ncols: Int) extends caps.Mutable:
-  update def setElem(i: Int, j: Int, x: Double): Unit = ???
-  def getElem(i: Int, j: Int): Double = ???
+type Matrix = Array[Int]
 
-def multiply(a: Matrix, b: Matrix, c: Matrix^): Unit =
-  c.setElem(0, 0, 0)
+def setElem(consume a: Matrix^, i: Int, j: Int, x: Double): Unit = ???
+def getElem(a: Matrix, i: Int, j: Int): Double = ???
+
+def multiply(a: Matrix, b: Matrix, consume c: Matrix^): Unit =
+  setElem(c, 0, 0, 0)
 
 @main def Main(names: String*) = ()
