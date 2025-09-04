@@ -1,13 +1,10 @@
-import language.experimental.captureChecking
-import java.io.FileOutputStream
+import language.experimental.{captureChecking, separationChecking}
 
-def usingLogFile[T](op: FileOutputStream^ => T): T =
-  val logFile = FileOutputStream("log")
-  val result = op(logFile)
-  logFile.close()
-  result
+class Matrix(nrows: Int, ncols: Int) extends caps.Mutable:
+  update def setElem(i: Int, j: Int, x: Double): Unit = ???
+  def getElem(i: Int, j: Int): Double = ???
 
-@main def Main(names: String*) = {
-  val later = usingLogFile { file => () => file.write(0) }
-  later() // crash
-}
+def multiply(a: Matrix, b: Matrix, c: Matrix^): Unit =
+  c.setElem(0, 0, 0)
+
+@main def Main(names: String*) = ()
