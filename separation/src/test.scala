@@ -15,6 +15,10 @@ class Ref(init: Int) extends Mutable:
   private var current = init
   def get: Int = current
   update def set(x: Int): Unit = current = x
+//def set(x: Int): Unit = current = x
+//                        ^^^^^^^^^^^
+//     Cannot assign to field current of Ref.this
+//     since the access is in method set, which is not an update method.
 //def foo(x: Int) = set(x)
 //                  ^^^
 //                  cannot call update method set from (Ref.this : Ref),
