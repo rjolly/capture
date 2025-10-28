@@ -1,15 +1,20 @@
 import language.experimental.{captureChecking, separationChecking}
+import java.util.TreeMap
 import scala.caps.Mutable
 
-type Matrix = Array[Int]
+//type Matrix = Array[Int]
+class Matrix extends TreeMap[Int, Int] with Mutable
 
-def setElem(consume a: Matrix^, i: Int, j: Int, x: Double): Unit = ???
+def setElem(a: Matrix^, i: Int, j: Int, x: Double): Unit = ???
 def getElem(a: Matrix, i: Int, j: Int): Double = ???
 
-def multiply(a: Matrix, b: Matrix, consume c: Matrix^): Unit =
+def multiply(a: Matrix, b: Matrix, c: Matrix^): Unit =
   setElem(c, 0, 0, 0)
 
-@main def Main(names: String*) = ()
+@main def Main(names: String*) =
+  val a = new Matrix
+  val b = new Matrix
+  multiply(a, a, b)
 
 class Ref(init: Int) extends Mutable:
   private var current = init
