@@ -6,7 +6,7 @@ import LzyList.{#:, range}
 @main def Main(names: String*) = {
   val m = Array(37831, 81817, 128201, 176087, 224743, 274579, 324953, 376133, 427993, 479939)
   def primes(max: Int) = sieve(range(2, max + 1))
-  def sieve(s: {*} LzyList[Int]): {s} LzyList[Int] = {
+  def sieve(s: LzyList[Int]^): LzyList[Int]^{s} = {
     val n = s.head
     n #: s.tail.map(s => sieve(s filter { _ % n != 0 }))
   }

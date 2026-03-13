@@ -19,11 +19,11 @@ trait LzyList[+A] {
     else if (n == 1) head #: Future(Nil)
     else head #: tail.map(_.take(n - 1))
 
-  @tailrec final def drop(n: Int): {this} LzyList[A] =
+  @tailrec final def drop(n: Int): LzyList[A]^{this} =
     if (n <= 0 || isEmpty) this
     else tail.await.drop(n - 1)
 
-  def force: {this} LzyList[A] =
+  def force: LzyList[A]^{this} =
     var these = this
     while (!these.isEmpty) these = these.tail.await
     this
