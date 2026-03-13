@@ -15,17 +15,17 @@ trait LzyList[+A] {
     else tail.await.filter(p)
 
   def take(n: Int): LzyList[A] =
-    if (n <= 0 || isEmpty) Nil
-    else if (n == 1) head #: Future(Nil)
+    if n <= 0 || isEmpty then Nil
+    else if n == 1 then head #: Future(Nil)
     else head #: tail.map(_.take(n - 1))
 
   @tailrec final def drop(n: Int): LzyList[A]^{this} =
-    if (n <= 0 || isEmpty) this
+    if n <= 0 || isEmpty then this
     else tail.await.drop(n - 1)
 
   def force: LzyList[A]^{this} =
     var these = this
-    while (!these.isEmpty) these = these.tail.await
+    while !these.isEmpty do these = these.tail.await
     this
 }
 
@@ -52,7 +52,7 @@ object LzyList {
   def from(start: Int): LzyList[Int] = from(start, 1)
 
   def range(start: Int, end: Int, step: Int): LzyList[Int] =
-    if (if (step < 0) start <= end else end <= start) Nil
+    if if step < 0 then start <= end else end <= start then Nil
     else start #: Future(range(start + step, end, step))
 
   def range(start: Int, end: Int): LzyList[Int] = range(start, end, 1)
